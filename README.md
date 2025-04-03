@@ -1,73 +1,53 @@
-# Welcome to your Lovable project
+# AI-Powered Procurement Solution
 
-## Project info
+## Overview
+The **AI-Powered Procurement Solution** automates the analysis of **Requests for Proposals (RFPs)** and bid evaluations for public sector projects. By leveraging **open-source AI**, it enhances **efficiency, transparency, and cost savings** in procurement processes.
 
-**URL**: https://lovable.dev/projects/d6ad794e-65b0-4094-a783-51d884240269
+## Features
+- **Automated RFP Analysis** – Extracts key requirements and evaluates proposals quickly.
+- **Bid Evaluation** – Scores and ranks bids based on predefined criteria.
+- **Transparency & Compliance** – Ensures fair and objective decision-making.
+- **Seamless Integration** – Open-source AI-based approach for easy adoption.
+- **Cost Optimization** – Reduces manual effort and improves procurement efficiency.
 
-## How can I edit this code?
+## How It Works
+1. **Upload RFP Documents** – The AI processes structured and unstructured procurement documents.
+2. **Extract Key Information** – Identifies eligibility criteria, pricing, timelines, and compliance requirements.
+3. **Evaluate Bids** – Automatically scores proposals based on predefined metrics.
+4. **Generate Reports** – Provides transparent insights into the decision-making process.
 
-There are several ways of editing your application.
+## Installation
+### Prerequisites
+- Python 3.x
+- Required dependencies (install using `requirements.txt`)
 
-**Use Lovable**
+### Setup
+```bash
+# Clone the repository
+git clone https://github.com/your-repo/ai-procurement-solution.git
+cd ai-procurement-solution
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/d6ad794e-65b0-4094-a783-51d884240269) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-**Edit a file directly in GitHub**
+### Running the Application
+```bash
+python main.py
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Integration
+This solution can be integrated with existing **procurement platforms**, **ERP systems**, and **document management tools** using APIs.
 
-**Use GitHub Codespaces**
+## Contributing
+We welcome contributions from the community! Feel free to submit issues, feature requests, or pull requests.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## License
+This project is licensed under the [MIT License](LICENSE).
 
-## What technologies are used for this project?
+## Contact
+For inquiries or support, please reach out via GitHub issues or contact **[Your Name]** at **your-email@example.com**.
 
-This project is built with:
+---
+### 🚀 Streamline Public Sector Procurement with AI! 🚀
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/d6ad794e-65b0-4094-a783-51d884240269) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
