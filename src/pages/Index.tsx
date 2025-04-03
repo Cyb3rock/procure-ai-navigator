@@ -77,7 +77,9 @@ const Index = () => {
               
               <TabsContent value="dashboard" className="space-y-6">
                 <div className="grid gap-6 md:grid-cols-6">
-                  <ActiveProcurementsTable className="md:col-span-6" />
+                  <div className="md:col-span-6">
+                    <ActiveProcurementsTable />
+                  </div>
                 </div>
                 
                 <div className="grid gap-6 md:grid-cols-6">
