@@ -88,7 +88,12 @@ export function DocumentParser() {
     link.setAttribute("download", `requirements-${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
-    link.remove();
+    
+    // Clean up
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      link.remove();
+    }, 100);
 
     toast({
       title: "Export successful",
@@ -184,9 +189,21 @@ export function DocumentParser() {
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium">Extracted Requirements</h3>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span className="text-sm">{extractedRequirements.length} requirements identified</span>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleExport}
+                    className="ml-auto"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Export as CSV
+                  </Button>
                 </div>
+              </div>
+              
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span>{extractedRequirements.length} requirements identified</span>
               </div>
               
               <ScrollArea className="h-[400px] border rounded-md">
