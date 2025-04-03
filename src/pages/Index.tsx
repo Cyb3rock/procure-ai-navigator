@@ -81,13 +81,21 @@ const Index = () => {
                 </div>
                 
                 <div className="grid gap-6 md:grid-cols-6">
-                  <ProcurementStatusChart className="md:col-span-3" />
-                  <ProcurementSavingsChart className="md:col-span-3" />
+                  <div className="md:col-span-3">
+                    <ProcurementStatusChart />
+                  </div>
+                  <div className="md:col-span-3">
+                    <ProcurementSavingsChart />
+                  </div>
                 </div>
                 
                 <div className="grid gap-6 md:grid-cols-6">
-                  <RecentActivitiesCard className="md:col-span-3" />
-                  <UpcomingDeadlinesCard className="md:col-span-3" />
+                  <div className="md:col-span-3">
+                    <RecentActivitiesCard />
+                  </div>
+                  <div className="md:col-span-3">
+                    <UpcomingDeadlinesCard />
+                  </div>
                 </div>
               </TabsContent>
               
