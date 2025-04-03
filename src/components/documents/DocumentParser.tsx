@@ -236,7 +236,7 @@ export function DocumentParser() {
           <span className="ai-tag">AI Powered</span> Document processing using natural language understanding
         </div>
         <Button 
-          variant="outline" 
+          variant="outline"
           size="sm" 
           onClick={handleExport}
           disabled={extractedRequirements.length === 0}
