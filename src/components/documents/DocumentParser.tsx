@@ -4,12 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Upload, FileText, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertTriangle, Download } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { ExtractedRequirement } from '@/types';
+import { useToast } from '@/hooks/use-toast';
 
 export function DocumentParser() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -17,6 +18,7 @@ export function DocumentParser() {
   const [processingProgress, setProcessingProgress] = useState(0);
   const [activeTab, setActiveTab] = useState('upload');
   const [extractedRequirements, setExtractedRequirements] = useState<ExtractedRequirement[]>([]);
+  const { toast } = useToast();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
@@ -52,6 +54,46 @@ export function DocumentParser() {
         return newProgress;
       });
     }, 300);
+  };
+
+  const handleExport = () => {
+    if (extractedRequirements.length === 0) {
+      toast({
+        title: "Nothing to export",
+        description: "No requirements have been extracted yet.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create CSV content
+    const headers = ["ID", "Requirement", "Category", "Criticality"];
+    const csvContent = [
+      headers.join(","),
+      ...extractedRequirements.map(req => 
+        [
+          req.id,
+          `"${req.text.replace(/"/g, '""')}"`, // Escape quotes in CSV
+          req.category,
+          req.criticality
+        ].join(",")
+      )
+    ].join("\n");
+
+    // Create a blob and download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `requirements-${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    toast({
+      title: "Export successful",
+      description: `${extractedRequirements.length} requirements exported to CSV.`,
+    });
   };
 
   const getCriticalityBadge = (criticality: string) => {
@@ -176,7 +218,13 @@ export function DocumentParser() {
         <div className="text-sm text-muted-foreground">
           <span className="ai-tag">AI Powered</span> Document processing using natural language understanding
         </div>
-        <Button variant="outline" size="sm" disabled={extractedRequirements.length === 0}>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleExport}
+          disabled={extractedRequirements.length === 0}
+        >
+          <Download className="h-4 w-4 mr-2" />
           Export Requirements
         </Button>
       </CardFooter>
