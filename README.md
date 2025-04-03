@@ -24,8 +24,8 @@ The **AI-Powered Procurement Solution** automates the analysis of **Requests for
 ### Setup
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/ai-procurement-solution.git
-cd ai-procurement-solution
+git clone https://github.com/Cyb3rock/procure-ai-navigator.git
+cd procure-ai-navigator
 
 # Install dependencies
 pip install -r requirements.txt
@@ -34,6 +34,28 @@ pip install -r requirements.txt
 ### Running the Application
 ```bash
 python main.py
+```
+
+## JSON Data Structure
+This solution processes procurement data in JSON format. Example JSON structure:
+
+```json
+{
+  "rfp_id": "12345",
+  "title": "Public Infrastructure Project",
+  "bids": [
+    {
+      "bidder": "Company A",
+      "amount": 500000,
+      "compliance_score": 85
+    },
+    {
+      "bidder": "Company B",
+      "amount": 450000,
+      "compliance_score": 90
+    }
+  ]
+}
 ```
 
 ## Integration
@@ -46,8 +68,7 @@ We welcome contributions from the community! Feel free to submit issues, feature
 This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
-For inquiries or support, please reach out via GitHub issues or contact **[Your Name]** at **your-email@example.com**.
+For inquiries or support, please reach out via GitHub issues or contact **SAHIL** at **khatrisahil614@gmail.com**.
 
 ---
 ### 🚀 Streamline Public Sector Procurement with AI! 🚀
-
