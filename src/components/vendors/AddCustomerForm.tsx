@@ -6,6 +6,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface AddCustomerFormProps {
   onAddCustomer: (customer: {
@@ -16,7 +17,9 @@ interface AddCustomerFormProps {
     paidDate: null;
     paidAmount: null;
     contactNumber: string;
+    preferredLanguage?: string;
   }) => void;
+  languages: string[];
 }
 
 const customerSchema = z.object({
@@ -24,11 +27,12 @@ const customerSchema = z.object({
   dueAmount: z.number().min(1, { message: "Amount must be greater than 0" }),
   dueDate: z.string().min(1, { message: "Due date is required" }),
   contactNumber: z.string().min(10, { message: "Valid phone number required" }),
+  preferredLanguage: z.string().optional(),
 });
 
 type CustomerFormValues = z.infer<typeof customerSchema>;
 
-const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer }) => {
+const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer, languages }) => {
   const form = useForm<CustomerFormValues>({
     resolver: zodResolver(customerSchema),
     defaultValues: {
@@ -36,6 +40,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer }) => {
       dueAmount: 0,
       dueDate: new Date().toISOString().split('T')[0],
       contactNumber: '',
+      preferredLanguage: languages[0],
     },
   });
 
@@ -50,6 +55,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer }) => {
       paidDate: null,
       paidAmount: null,
       contactNumber: values.contactNumber,
+      preferredLanguage: values.preferredLanguage,
     });
     
     form.reset({
@@ -57,6 +63,7 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer }) => {
       dueAmount: 0,
       dueDate: new Date().toISOString().split('T')[0],
       contactNumber: '',
+      preferredLanguage: languages[0],
     });
   };
 
@@ -122,6 +129,31 @@ const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer }) => {
               <FormDescription>
                 Include country code, e.g., +1 for US
               </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="preferredLanguage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Preferred Language</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select language" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {languages.map((language) => (
+                    <SelectItem key={language} value={language}>
+                      {language.charAt(0).toUpperCase() + language.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

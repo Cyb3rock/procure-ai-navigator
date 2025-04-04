@@ -9,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,14 +22,15 @@ interface Customer {
   paidDate: string | null;
   paidAmount: number | null;
   contactNumber: string;
+  preferredLanguage?: string;
 }
 
 interface CustomersListProps {
   customers: Customer[];
-  onMarkAsPaid: (id: string, paidAmount: number) => void;
+  onRecordPayment: (id: string, paidAmount: number) => void;
 }
 
-const CustomersList: React.FC<CustomersListProps> = ({ customers, onMarkAsPaid }) => {
+const CustomersList: React.FC<CustomersListProps> = ({ customers, onRecordPayment }) => {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -43,7 +43,7 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, onMarkAsPaid }
 
   const handleSubmitPayment = () => {
     if (selectedCustomerId) {
-      onMarkAsPaid(selectedCustomerId, paymentAmount);
+      onRecordPayment(selectedCustomerId, paymentAmount);
       setDialogOpen(false);
       setSelectedCustomerId(null);
     }

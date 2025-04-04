@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -53,7 +52,6 @@ const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor, onLogout }) =
     
     setCustomers(mockCustomers);
     
-    // Simulate unread notifications
     setUnreadNotifications(3);
   }, []);
 
@@ -236,7 +234,10 @@ const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor, onLogout }) =
               <CardDescription>Create a new customer credit entry</CardDescription>
             </CardHeader>
             <CardContent>
-              <AddCustomerForm onAddCustomer={handleAddCustomer} languages={twilioConfig?.defaultLanguage ? [twilioConfig.defaultLanguage] : ["english", "hindi", "gujarati", "marathi"]} />
+              <AddCustomerForm 
+                onAddCustomer={handleAddCustomer} 
+                languages={twilioConfig?.defaultLanguage ? [twilioConfig.defaultLanguage] : ["english", "hindi", "gujarati", "marathi"]} 
+              />
             </CardContent>
           </Card>
           
@@ -246,7 +247,10 @@ const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor, onLogout }) =
               <CardDescription>Manage your customer credit tracking</CardDescription>
             </CardHeader>
             <CardContent>
-              <CustomersList customers={customers} onRecordPayment={handleRecordPayment} />
+              <CustomersList 
+                customers={customers} 
+                onRecordPayment={handleRecordPayment} 
+              />
             </CardContent>
           </Card>
         </TabsContent>
