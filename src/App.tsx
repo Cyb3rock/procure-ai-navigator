@@ -16,32 +16,33 @@ import SettingsPage from "./pages/SettingsPage";
 import DocumentationPage from "./pages/DocumentationPage";
 import React from "react";
 
-// Move the QueryClient creation inside the component
 const App = () => {
   // Create a client
   const queryClient = new QueryClient();
   
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/rfps" element={<RfpsPage />} />
-            <Route path="/vendors" element={<VendorsPage />} />
-            <Route path="/evaluations" element={<EvaluationsPage />} />
-            <Route path="/analytics" element={<AnalyticsPage />} />
-            <Route path="/contracts" element={<ContractsPage />} />
-            <Route path="/purchase-orders" element={<PurchaseOrdersPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/documentation" element={<DocumentationPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/rfps" element={<RfpsPage />} />
+              <Route path="/vendors" element={<VendorsPage />} />
+              <Route path="/evaluations" element={<EvaluationsPage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/contracts" element={<ContractsPage />} />
+              <Route path="/purchase-orders" element={<PurchaseOrdersPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/documentation" element={<DocumentationPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </TooltipProvider>
         </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
   );
 };
 
