@@ -1,4 +1,3 @@
-
 // This file represents what would be in your Node.js backend
 
 const express = require('express');
@@ -13,6 +12,10 @@ const multer = require('multer');
 const path = require('path');
 
 const app = express();
+
+// Import routes
+const authRoutes = require('./routes/auth');
+const rfpRoutes = require('./routes/rfps');
 
 // Middleware
 app.use(cors());
@@ -32,6 +35,16 @@ const upload = multer({ storage: storage });
 // JWT Secret (in production, use environment variable)
 const JWT_SECRET = 'your_jwt_secret_key';
 
+// Connect to MongoDB (uncomment and configure for production)
+mongoose.connect('mongodb://localhost:27017/procurement-platform', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => {
+  console.log('MongoDB connected successfully');
+}).catch(err => {
+  console.error('MongoDB connection error:', err);
+});
+
 // Store vendor configurations in memory (would use MongoDB in production)
 const vendorConfigs = {
   // vendorId: {
@@ -40,39 +53,15 @@ const vendorConfigs = {
   // }
 };
 
-// MongoDB connection (commented out for now)
-// mongoose.connect('mongodb://localhost:27017/procurement-platform', {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true
-// });
+// User Schema and Model (now using MongoDB)
+// Using the model from ./models/User.js
 
-// User Schema and Model (would use MongoDB in production)
-const users = [];
+// Import middleware
+const { authMiddleware, adminMiddleware } = require('./middleware/auth');
 
-// Middleware to verify JWT token
-const authMiddleware = (req, res, next) => {
-  const token = req.header('x-auth-token');
-  
-  if (!token) {
-    return res.status(401).json({ error: 'No token, authorization denied' });
-  }
-  
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    res.status(401).json({ error: 'Token is not valid' });
-  }
-};
-
-// Admin middleware
-const adminMiddleware = (req, res, next) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Access denied. Admin only.' });
-  }
-  next();
-};
+// Use routes
+app.use('/api/auth', authRoutes);
+app.use('/api/rfps', rfpRoutes);
 
 // Google Sheets helper
 async function getGoogleSheetsClient(credentials) {
@@ -85,70 +74,6 @@ async function getGoogleSheetsClient(credentials) {
   const client = await auth.getClient();
   return google.sheets({ version: 'v4', auth: client });
 }
-
-// User registration
-app.post('/api/users/register', async (req, res) => {
-  try {
-    const { name, email, password, role = 'vendor' } = req.body;
-    
-    // Check if user already exists
-    const userExists = users.find(user => user.email === email);
-    if (userExists) {
-      return res.status(400).json({ error: 'User already exists' });
-    }
-    
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    
-    // Create new user
-    const newUser = {
-      id: Date.now().toString(),
-      name,
-      email,
-      password: hashedPassword,
-      role,
-      createdAt: new Date().toISOString()
-    };
-    
-    users.push(newUser);
-    
-    // Create JWT token
-    const token = jwt.sign({ id: newUser.id, role: newUser.role }, JWT_SECRET, { expiresIn: '1d' });
-    
-    res.json({ token, user: { id: newUser.id, name, email, role } });
-  } catch (error) {
-    console.error('Error registering user:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// User login
-app.post('/api/users/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    
-    // Find user
-    const user = users.find(user => user.email === email);
-    if (!user) {
-      return res.status(400).json({ error: 'Invalid credentials' });
-    }
-    
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ error: 'Invalid credentials' });
-    }
-    
-    // Create JWT token
-    const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
-    
-    res.json({ token, user: { id: user.id, name: user.name, email, role: user.role } });
-  } catch (error) {
-    console.error('Error logging in:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
 
 // Add customer to Google Sheet
 app.post('/api/customer', authMiddleware, async (req, res) => {
@@ -340,30 +265,6 @@ function getLanguageCode(language) {
   
   return languageCodes[language] || languageCodes.english;
 }
-
-// RFP Routes
-app.post('/api/rfps', authMiddleware, async (req, res) => {
-  try {
-    const { title, value, deadline } = req.body;
-    
-    const newRFP = {
-      id: Date.now().toString(),
-      title,
-      value,
-      deadline,
-      status: 'draft',
-      vendorId: req.user.id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    // In a real app, save to database
-    res.json({ success: true, rfp: newRFP });
-  } catch (error) {
-    console.error('Error creating RFP:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
 
 // Contract Routes
 app.post('/api/contracts', authMiddleware, upload.single('document'), async (req, res) => {
