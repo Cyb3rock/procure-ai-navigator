@@ -6,11 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Check } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TwilioConfig } from '@/types/vendor';
 
 interface TwilioSetupProps {
   isConnected: boolean;
-  onConnect: (accountSid: string, authToken: string, phoneNumber: string, reminderMessage: string) => void;
+  onConnect: (accountSid: string, authToken: string, phoneNumber: string, reminderMessage: string, defaultLanguage: string) => void;
 }
 
 const TwilioSetup: React.FC<TwilioSetupProps> = ({ isConnected, onConnect }) => {
@@ -20,6 +21,7 @@ const TwilioSetup: React.FC<TwilioSetupProps> = ({ isConnected, onConnect }) => 
   const [reminderMessage, setReminderMessage] = useState(
     'Hello, this is a reminder that your payment of {{amount}} is due on {{dueDate}}. Please contact us to make a payment.'
   );
+  const [defaultLanguage, setDefaultLanguage] = useState('english');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +34,7 @@ const TwilioSetup: React.FC<TwilioSetupProps> = ({ isConnected, onConnect }) => 
       
       // Simulate API call
       setTimeout(() => {
-        onConnect(accountSid, authToken, phoneNumber, reminderMessage);
+        onConnect(accountSid, authToken, phoneNumber, reminderMessage, defaultLanguage);
         setIsLoading(false);
       }, 1500);
       
@@ -59,8 +61,9 @@ const TwilioSetup: React.FC<TwilioSetupProps> = ({ isConnected, onConnect }) => 
         </Alert>
         
         <Tabs defaultValue="message">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="message">Message</TabsTrigger>
+            <TabsTrigger value="language">Language</TabsTrigger>
             <TabsTrigger value="schedule">Schedule</TabsTrigger>
           </TabsList>
           
@@ -84,6 +87,29 @@ const TwilioSetup: React.FC<TwilioSetupProps> = ({ isConnected, onConnect }) => 
             >
               Send Test Voice Call
             </Button>
+          </TabsContent>
+          
+          <TabsContent value="language" className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="default-language">Default Language</Label>
+              <Select
+                value={defaultLanguage}
+                onValueChange={(value) => setDefaultLanguage(value)}
+              >
+                <SelectTrigger id="default-language">
+                  <SelectValue placeholder="Select language" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="english">English</SelectItem>
+                  <SelectItem value="hindi">Hindi 🇮🇳</SelectItem>
+                  <SelectItem value="gujarati">Gujarati 🇬🇴</SelectItem>
+                  <SelectItem value="marathi">Marathi 🇲🇭</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Default language for voice reminders. This can be overridden per customer.
+              </p>
+            </div>
           </TabsContent>
           
           <TabsContent value="schedule" className="space-y-4">
@@ -136,6 +162,24 @@ const TwilioSetup: React.FC<TwilioSetupProps> = ({ isConnected, onConnect }) => 
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
         />
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="default-language">Default Language</Label>
+        <Select
+          value={defaultLanguage}
+          onValueChange={(value) => setDefaultLanguage(value)}
+        >
+          <SelectTrigger id="default-language">
+            <SelectValue placeholder="Select language" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="english">English</SelectItem>
+            <SelectItem value="hindi">Hindi 🇮🇳</SelectItem>
+            <SelectItem value="gujarati">Gujarati 🇬🇴</SelectItem>
+            <SelectItem value="marathi">Marathi 🇲🇭</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       
       {error && (
