@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,17 +7,7 @@ import CustomersList from '@/components/vendors/CustomersList';
 import AddCustomerForm from '@/components/vendors/AddCustomerForm';
 import GoogleSheetSetup from '@/components/vendors/GoogleSheetSetup';
 import TwilioSetup from '@/components/vendors/TwilioSetup';
-
-interface Customer {
-  id: string;
-  name: string;
-  dueAmount: number;
-  entryDate: string;
-  dueDate: string;
-  paidDate: string | null;
-  paidAmount: number | null;
-  contactNumber: string;
-}
+import { Customer, TwilioConfig } from '@/types/vendor';
 
 interface VendorDashboardProps {
   vendor: { id: string; name: string } | null;
@@ -29,10 +18,10 @@ const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor, onLogout }) =
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isSheetConnected, setIsSheetConnected] = useState(false);
   const [isTwilioConnected, setIsTwilioConnected] = useState(false);
+  const [twilioConfig, setTwilioConfig] = useState<TwilioConfig | null>(null);
   const [activeTab, setActiveTab] = useState("customers");
   const { toast } = useToast();
 
-  // Mock initial data
   useEffect(() => {
     const mockCustomers: Customer[] = [
       {
@@ -73,7 +62,6 @@ const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor, onLogout }) =
       description: `${customer.name} has been added to your credit tracking list.`,
     });
 
-    // In a real app, we would sync to Google Sheet here
     if (isSheetConnected) {
       syncToGoogleSheets(newCustomer);
     }
@@ -98,7 +86,6 @@ const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor, onLogout }) =
       description: `Payment of $${paidAmount} has been recorded.`,
     });
 
-    // In a real app, we would update the Google Sheet here
     if (isSheetConnected) {
       const paidCustomer = updatedCustomers.find(c => c.id === id);
       if (paidCustomer) {
@@ -108,19 +95,14 @@ const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor, onLogout }) =
   };
 
   const syncToGoogleSheets = (customer: Customer) => {
-    // This would call your backend API to add to Google Sheets
     console.log("Syncing to Google Sheets:", customer);
-    // In a real app, make API call to your backend
   };
 
   const updateGoogleSheetsRecord = (customer: Customer) => {
-    // This would call your backend API to update Google Sheets
     console.log("Updating Google Sheets record:", customer);
-    // In a real app, make API call to your backend
   };
 
   const handleConnectGoogleSheets = (sheetId: string) => {
-    // In a real app, this would validate and store the Google Sheets connection
     setIsSheetConnected(true);
     toast({
       title: "Google Sheets Connected",
@@ -128,9 +110,14 @@ const VendorDashboard: React.FC<VendorDashboardProps> = ({ vendor, onLogout }) =
     });
   };
 
-  const handleConnectTwilio = (accountSid: string, authToken: string, phoneNumber: string) => {
-    // In a real app, this would validate and store Twilio credentials
+  const handleConnectTwilio = (accountSid: string, authToken: string, phoneNumber: string, reminderMessage: string) => {
     setIsTwilioConnected(true);
+    setTwilioConfig({
+      accountSid,
+      authToken,
+      phoneNumber,
+      reminderMessage
+    });
     toast({
       title: "Twilio Connected",
       description: "Voice reminders are now enabled for overdue payments.",

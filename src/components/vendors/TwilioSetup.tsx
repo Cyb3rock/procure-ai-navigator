@@ -6,10 +6,11 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Check } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TwilioConfig } from '@/types/vendor';
 
 interface TwilioSetupProps {
   isConnected: boolean;
-  onConnect: (accountSid: string, authToken: string, phoneNumber: string) => void;
+  onConnect: (accountSid: string, authToken: string, phoneNumber: string, reminderMessage: string) => void;
 }
 
 const TwilioSetup: React.FC<TwilioSetupProps> = ({ isConnected, onConnect }) => {
@@ -31,7 +32,7 @@ const TwilioSetup: React.FC<TwilioSetupProps> = ({ isConnected, onConnect }) => 
       
       // Simulate API call
       setTimeout(() => {
-        onConnect(accountSid, authToken, phoneNumber);
+        onConnect(accountSid, authToken, phoneNumber, reminderMessage);
         setIsLoading(false);
       }, 1500);
       
@@ -72,7 +73,7 @@ const TwilioSetup: React.FC<TwilioSetupProps> = ({ isConnected, onConnect }) => 
                 onChange={(e) => setReminderMessage(e.target.value)}
               />
               <p className="text-xs text-muted-foreground">
-                You can use {{amount}}, {{dueDate}}, and {{customerName}} variables in your message.
+                You can use {'{{amount}}'}, {'{{dueDate}}'}, and {'{{customerName}}'} variables in your message.
               </p>
             </div>
             
