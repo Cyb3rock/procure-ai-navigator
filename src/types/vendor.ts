@@ -45,13 +45,13 @@ export interface User {
   createdAt: string;
 }
 
-// RFP types
+// RFP types - updated to match MongoDB schema
 export interface RFP {
   id: string;
-  title: string;
-  value: number;
-  deadline: string;
-  status: 'draft' | 'submitted' | 'awarded' | 'rejected';
+  title: string;  // This maps to rfpTitle in MongoDB
+  value: number;  // This maps to amount in MongoDB
+  deadline: string;  // This maps to submissionDeadline in MongoDB
+  status: 'Draft' | 'Submitted' | 'Awarded' | 'Rejected';  // Updated to match the backend
   vendorId: string;
   createdAt: string;
   updatedAt: string;
@@ -115,4 +115,65 @@ export interface AdminSettings {
     publicKey: string;
     privateKey: string;
   };
+}
+
+// Analytics types
+export interface AdminOverview {
+  totalProcurementValue: number;
+  rfpStatusSummary: Record<string, number>;
+  vendorCount: number;
+  recentRFPs: RFP[];
+}
+
+export interface MonthlySpending {
+  month: string;
+  shortMonth: string;
+  value: number;
+  count: number;
+}
+
+export interface RfpStatusDetail {
+  status: string;
+  count: number;
+  value: number;
+  percentageByCount: number;
+  percentageByValue: number;
+}
+
+export interface RfpStatusData {
+  labels: string[];
+  counts: number[];
+  values: number[];
+  details: RfpStatusDetail[];
+}
+
+export interface VendorPerformance {
+  totalSubmitted: number;
+  totalAwarded: number;
+  successRate: number;
+  totalEarnings: number;
+}
+
+export interface VendorAnalytics {
+  rfpCounts: Record<string, number>;
+  performance: VendorPerformance;
+  chartData: {
+    labels: string[];
+    counts: number[];
+    values: number[];
+  };
+  recentRFPs?: RFP[];
+}
+
+export interface TopVendor {
+  id: string;
+  name: string;
+  email: string;
+  totalValue: number;
+  count: number;
+  recentRFPs: {
+    id: string;
+    title: string;
+    amount: number;
+  }[];
 }

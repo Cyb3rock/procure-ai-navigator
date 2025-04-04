@@ -16,6 +16,7 @@ const app = express();
 // Import routes
 const authRoutes = require('./routes/auth');
 const rfpRoutes = require('./routes/rfps');
+const analyticsRoutes = require('./routes/analytics');
 
 // Middleware
 app.use(cors());
@@ -62,6 +63,7 @@ const { authMiddleware, adminMiddleware } = require('./middleware/auth');
 // Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/rfps', rfpRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Google Sheets helper
 async function getGoogleSheetsClient(credentials) {
@@ -356,7 +358,7 @@ app.put('/api/notifications/:id/read', authMiddleware, async (req, res) => {
 });
 
 // Cron job to check for overdue payments and make reminder calls
-cron.schedule('0 9 * * *', async () => {  // Run every day at 9 AM
+cron.schedule('0 9 * * *', async () => {  
   try {
     // Loop through all vendors
     for (const vendorId in vendorConfigs) {
