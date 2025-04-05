@@ -62,9 +62,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Use apiPost from our lib/api helper with proper typing
-      // Fix the API path to match server routes
-      const response = await apiPost<AuthResponse>('/api/auth/login', { email, password }, { requiresAuth: false });
+      // Fix the API path - remove the '/api' prefix since it's already in API_BASE_URL
+      const response = await apiPost<AuthResponse>('auth/login', { email, password }, { requiresAuth: false });
       
       // Store user data and token in session storage
       sessionStorage.setItem('user', JSON.stringify(response.user));
@@ -93,9 +92,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const register = async (name: string, email: string, password: string, role: string = 'vendor') => {
     setIsLoading(true);
     try {
-      // Use apiPost from our lib/api helper with proper typing
-      // Fix the API path to match server routes
-      const response = await apiPost<AuthResponse>('/api/auth/register', 
+      // Fix the API path - remove the '/api' prefix since it's already in API_BASE_URL
+      const response = await apiPost<AuthResponse>('auth/register', 
         { name, email, password, role }, 
         { requiresAuth: false }
       );
