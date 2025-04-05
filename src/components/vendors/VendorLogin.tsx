@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,12 +10,8 @@ import { useForm } from 'react-hook-form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
-
-// Mock vendor database for demo purposes
-const MOCK_VENDORS = [
-  { id: 'v1', email: 'vendor1@example.com', password: 'password123', name: 'Vendor One' },
-  { id: 'v2', email: 'vendor2@example.com', password: 'password123', name: 'Vendor Two' },
-];
+import { useAuth } from '@/context/AuthContext';
+import { Spinner } from '@/components/ui/spinner';
 
 interface VendorLoginProps {
   onLogin: (vendor: { id: string; name: string }) => void;
@@ -42,6 +38,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const VendorLogin: React.FC<VendorLoginProps> = ({ onLogin }) => {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { login, register, isLoading } = useAuth();
   const { toast } = useToast();
   
   const loginForm = useForm<LoginFormValues>({
@@ -62,30 +59,31 @@ const VendorLogin: React.FC<VendorLoginProps> = ({ onLogin }) => {
     },
   });
 
-  const handleLoginSubmit = (values: LoginFormValues) => {
-    // Check if vendor exists in mock database
-    const vendor = MOCK_VENDORS.find(v => 
-      v.email === values.email && v.password === values.password
-    );
-
-    if (vendor) {
-      setErrorMessage(null);
-      onLogin({ id: vendor.id, name: vendor.name });
-    } else {
+  const handleLoginSubmit = async (values: LoginFormValues) => {
+    setErrorMessage(null);
+    try {
+      await login(values.email, values.password);
+      // The actual user will come from the Auth context now
+      onLogin({ id: 'authenticated', name: 'User' });
+    } catch (error) {
       setErrorMessage("Invalid email or password");
     }
   };
 
-  const handleRegisterSubmit = (values: RegisterFormValues) => {
-    // In a real app, you would send this to your backend API
-    toast({
-      title: "Registration Successful",
-      description: "Your account has been registered. You can now log in.",
-    });
-    
-    // Switch to login tab
-    setActiveTab("login");
-    registerForm.reset();
+  const handleRegisterSubmit = async (values: RegisterFormValues) => {
+    setErrorMessage(null);
+    try {
+      await register(values.name, values.email, values.password);
+      // The actual user will come from the Auth context now
+      onLogin({ id: 'authenticated', name: values.name });
+      
+      toast({
+        title: "Registration Successful",
+        description: "Your account has been registered.",
+      });
+    } catch (error) {
+      setErrorMessage("Registration failed. Please try again.");
+    }
   };
 
   return (
@@ -141,7 +139,8 @@ const VendorLogin: React.FC<VendorLoginProps> = ({ onLogin }) => {
                   )}
                 />
                 
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? <Spinner size="sm" className="mr-2" /> : null}
                   Log In
                 </Button>
               </form>
@@ -149,6 +148,13 @@ const VendorLogin: React.FC<VendorLoginProps> = ({ onLogin }) => {
           </TabsContent>
           
           <TabsContent value="register">
+            {errorMessage && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+            
             <Form {...registerForm}>
               <form onSubmit={registerForm.handleSubmit(handleRegisterSubmit)} className="space-y-4">
                 <FormField
@@ -207,7 +213,8 @@ const VendorLogin: React.FC<VendorLoginProps> = ({ onLogin }) => {
                   )}
                 />
                 
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? <Spinner size="sm" className="mr-2" /> : null}
                   Register
                 </Button>
               </form>
