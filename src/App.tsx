@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,12 +21,11 @@ import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminRoute from "./components/auth/AdminRoute";
-import React from "react";
+
+// Create a client
+const queryClient = new QueryClient();
 
 const App = () => {
-  // Create a client
-  const queryClient = new QueryClient();
-  
   return (
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
