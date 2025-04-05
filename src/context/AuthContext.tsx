@@ -10,6 +10,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string, role?: string) => Promise<void>;
+  googleAuth: () => Promise<void>;
   logout: () => void;
 }
 
@@ -122,6 +123,48 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const googleAuth = async () => {
+    setIsLoading(true);
+    try {
+      // Create a Google OAuth popup
+      const googleWindow = window.open(`${api}/auth/google`, '_blank', 'width=500,height=600');
+      
+      // Listen for messages from the popup window
+      window.addEventListener('message', async (event) => {
+        // Check if the message is from our popup and contains auth data
+        if (event.data && event.data.type === 'google-auth-success') {
+          const { user, token } = event.data;
+          
+          // Store user data and token in session storage
+          sessionStorage.setItem('user', JSON.stringify(user));
+          sessionStorage.setItem('token', token);
+          
+          // Update auth state
+          setCurrentUser(user);
+          setIsAuthenticated(true);
+          
+          toast({
+            title: "Google Login Successful",
+            description: `Welcome, ${user.name}!`,
+          });
+          
+          setIsLoading(false);
+          
+          // Close the popup
+          if (googleWindow) googleWindow.close();
+        }
+      });
+    } catch (error) {
+      toast({
+        title: "Google Login Failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      throw error;
+    }
+  };
+
   const logout = () => {
     // Remove user data from session storage
     sessionStorage.removeItem('user');
@@ -143,6 +186,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isAuthenticated,
     login,
     register,
+    googleAuth,
     logout,
   };
 
