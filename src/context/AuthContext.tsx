@@ -13,6 +13,13 @@ interface AuthContextType {
   logout: () => void;
 }
 
+// Define interfaces for API responses
+interface AuthResponse {
+  success: boolean;
+  token: string;
+  user: User;
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
@@ -55,8 +62,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Use apiPost from our lib/api helper
-      const response = await apiPost('/api/auth/login', { email, password }, { requiresAuth: false });
+      // Use apiPost from our lib/api helper with proper typing
+      const response = await apiPost<AuthResponse>('/api/auth/login', { email, password }, { requiresAuth: false });
       
       // Store user data and token in session storage
       sessionStorage.setItem('user', JSON.stringify(response.user));
@@ -85,8 +92,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const register = async (name: string, email: string, password: string, role: string = 'vendor') => {
     setIsLoading(true);
     try {
-      // Use apiPost from our lib/api helper
-      const response = await apiPost('/api/auth/register', 
+      // Use apiPost from our lib/api helper with proper typing
+      const response = await apiPost<AuthResponse>('/api/auth/register', 
         { name, email, password, role }, 
         { requiresAuth: false }
       );
