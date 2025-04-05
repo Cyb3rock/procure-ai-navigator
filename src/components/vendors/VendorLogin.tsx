@@ -66,7 +66,7 @@ const VendorLogin: React.FC<VendorLoginProps> = ({ onLogin }) => {
       // The actual user will come from the Auth context now
       onLogin({ id: 'authenticated', name: 'User' });
     } catch (error) {
-      setErrorMessage("Invalid email or password");
+      setErrorMessage(error instanceof Error ? error.message : "Invalid email or password");
     }
   };
 
@@ -82,7 +82,7 @@ const VendorLogin: React.FC<VendorLoginProps> = ({ onLogin }) => {
         description: "Your account has been registered.",
       });
     } catch (error) {
-      setErrorMessage("Registration failed. Please try again.");
+      setErrorMessage(error instanceof Error ? error.message : "Registration failed. Please try again.");
     }
   };
 

@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types/vendor';
 import { useToast } from '@/hooks/use-toast';
+import { api, apiPost } from '@/lib/api';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -38,8 +39,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const storedToken = sessionStorage.getItem('token');
     
     if (storedUser && storedToken) {
-      setCurrentUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
+      try {
+        setCurrentUser(JSON.parse(storedUser));
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        sessionStorage.removeItem('user');
+        sessionStorage.removeItem('token');
+      }
     }
     
     setIsLoading(false);
@@ -48,38 +55,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Call the backend login API
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Login failed');
-      }
-
-      const data = await response.json();
+      // Use apiPost from our lib/api helper
+      const response = await apiPost('/api/auth/login', { email, password }, { requiresAuth: false });
       
       // Store user data and token in session storage
-      sessionStorage.setItem('user', JSON.stringify(data.user));
-      sessionStorage.setItem('token', data.token);
+      sessionStorage.setItem('user', JSON.stringify(response.user));
+      sessionStorage.setItem('token', response.token);
       
       // Update auth state
-      setCurrentUser(data.user);
+      setCurrentUser(response.user);
       setIsAuthenticated(true);
       
       toast({
         title: "Login Successful",
-        description: `Welcome back, ${data.user.name}!`,
+        description: `Welcome back, ${response.user.name}!`,
       });
     } catch (error) {
       toast({
         title: "Login Failed",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        description: error instanceof Error ? error.message : "Invalid credentials",
         variant: "destructive",
       });
       throw error;
@@ -91,33 +85,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const register = async (name: string, email: string, password: string, role: string = 'vendor') => {
     setIsLoading(true);
     try {
-      // Call the backend register API
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, password, role }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Registration failed');
-      }
-
-      const data = await response.json();
+      // Use apiPost from our lib/api helper
+      const response = await apiPost('/api/auth/register', 
+        { name, email, password, role }, 
+        { requiresAuth: false }
+      );
       
       // Store user data and token in session storage
-      sessionStorage.setItem('user', JSON.stringify(data.user));
-      sessionStorage.setItem('token', data.token);
+      sessionStorage.setItem('user', JSON.stringify(response.user));
+      sessionStorage.setItem('token', response.token);
       
       // Update auth state
-      setCurrentUser(data.user);
+      setCurrentUser(response.user);
       setIsAuthenticated(true);
       
       toast({
         title: "Registration Successful",
-        description: `Welcome, ${data.user.name}!`,
+        description: `Welcome, ${response.user.name}!`,
       });
     } catch (error) {
       toast({
