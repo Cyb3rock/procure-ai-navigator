@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,6 +8,7 @@ import { LogOut, Users, Settings, LayoutDashboard } from 'lucide-react';
 import UsersManagement from './UsersManagement';
 import AdminSettings from './AdminSettings';
 import AdminOverview from './AdminOverview';
+import { Navigate } from '@/components/ui/navigate';
 
 const AdminDashboardPage = () => {
   const { currentUser, logout } = useAuth();
