@@ -63,6 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsLoading(true);
     try {
       // Use apiPost from our lib/api helper with proper typing
+      // Fix the API path to match server routes
       const response = await apiPost<AuthResponse>('/api/auth/login', { email, password }, { requiresAuth: false });
       
       // Store user data and token in session storage
@@ -93,6 +94,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsLoading(true);
     try {
       // Use apiPost from our lib/api helper with proper typing
+      // Fix the API path to match server routes
       const response = await apiPost<AuthResponse>('/api/auth/register', 
         { name, email, password, role }, 
         { requiresAuth: false }

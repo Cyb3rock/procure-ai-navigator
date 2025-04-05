@@ -17,7 +17,7 @@ router.post('/register', async (req, res) => {
     // Check if email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: 'User with this email already exists' });
+      return res.status(400).json({ success: false, error: 'User with this email already exists' });
     }
     
     // Create new user (password hashing handled by pre-save hook)
@@ -51,6 +51,7 @@ router.post('/register', async (req, res) => {
   } catch (error) {
     console.error('Error registering user:', error);
     return res.status(500).json({
+      success: false,
       error: 'Server error registering user',
       details: error.message
     });
@@ -65,13 +66,13 @@ router.post('/login', async (req, res) => {
     // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: 'Invalid credentials' });
+      return res.status(400).json({ success: false, error: 'Invalid credentials' });
     }
     
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(400).json({ error: 'Invalid credentials' });
+      return res.status(400).json({ success: false, error: 'Invalid credentials' });
     }
     
     // Create JWT token
@@ -95,6 +96,7 @@ router.post('/login', async (req, res) => {
   } catch (error) {
     console.error('Error logging in:', error);
     return res.status(500).json({
+      success: false,
       error: 'Server error logging in',
       details: error.message
     });
@@ -107,7 +109,7 @@ router.get('/me', authMiddleware, async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
     
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ success: false, error: 'User not found' });
     }
     
     res.json({
@@ -117,6 +119,7 @@ router.get('/me', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Error getting user profile:', error);
     res.status(500).json({
+      success: false,
       error: 'Server error getting user profile',
       details: error.message
     });

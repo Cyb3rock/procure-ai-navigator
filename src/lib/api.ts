@@ -1,7 +1,8 @@
 
 import { toast } from '@/hooks/use-toast';
 
-const API_BASE_URL = ''; // Leave empty for relative URLs
+// Update the API_BASE_URL to point to the correct server endpoint
+const API_BASE_URL = '/api'; // This will append /api to all requests
 
 interface ApiOptions {
   method?: string;
@@ -32,7 +33,16 @@ export const api = async <T>(endpoint: string, options: ApiOptions = {}): Promis
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    // Fix the URL construction to ensure proper formatting
+    let url = endpoint;
+    if (!endpoint.startsWith('/')) {
+      url = `/${endpoint}`;
+    }
+    
+    // Log the request URL for debugging
+    console.log(`API Request to: ${API_BASE_URL}${url}`);
+    
+    const response = await fetch(`${API_BASE_URL}${url}`, {
       method,
       headers,
       body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
@@ -66,6 +76,7 @@ export const api = async <T>(endpoint: string, options: ApiOptions = {}): Promis
   }
 };
 
+// Use relative paths for the API helper functions
 export const apiGet = <T>(endpoint: string, options: Omit<ApiOptions, 'method' | 'body'> = {}) => {
   return api<T>(endpoint, { ...options, method: 'GET' });
 };
